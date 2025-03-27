@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            color: #666;
+        }
+        .links {
+            margin-top: 20px;
+        }
+        a {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
+        .loading {
+            font-size: 18px;
+            color: #4CAF50;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, Dr. <span id="doctorName"></span>!</h2>
+        <p>Email: <span id="doctorEmail"></span></p>
+        <p>Specialization: <span id="doctorSpecialization"></span></p>
+        <p>Clinic: <span id="doctorClinic"></span></p>
+
+        <div class="links">
+            <a href="slots.html">Manage Slots</a>
+            <a href="apointments.html">View Appointments</a>
+        </div>
+
+        <div id="loadingState" class="loading" style="display:none;">Loading doctor details...</div>
+        <div id="errorState" class="error" style="display:none;"></div>
+
+        <button id="logoutBtn">Logout</button>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

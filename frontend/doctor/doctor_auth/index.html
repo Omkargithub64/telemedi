@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Portal</title>
+    <script defer src="script.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, button { margin: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Doctor Login</h2>
+    <input type="email" id="loginEmail" placeholder="Enter Email"><br>
+    <input type="password" id="loginPassword" placeholder="Enter Password"><br>
+    <button onclick="loginDoctor()">Login</button>
+    <p id="loginMessage"></p>
+
+    <h2>Doctor Registration</h2>
+    <input type="text" id="registerFullName" placeholder="Full Name"><br>
+    <input type="text" id="registerUsername" placeholder="Username"><br>
+    <input type="email" id="registerEmail" placeholder="Email"><br>
+    <input type="text" id="registerPhone" placeholder="Phone Number"><br>
+    <input type="date" id="registerDob"><br>
+    <input type="text" id="registerGender" placeholder="Gender (Male/Female)"><br>
+    <input type="text" id="registerSpecialization" placeholder="Specialization"><br>
+    <input type="text" id="registerQualification" placeholder="Qualification"><br>
+    <input type="number" id="registerExperience" placeholder="Experience (years)"><br>
+    <input type="text" id="registerLicense" placeholder="License Number"><br>
+    <input type="text" id="registerClinicName" placeholder="Clinic Name"><br>
+    <input type="text" id="registerClinicAddress" placeholder="Clinic Address"><br>
+    <input type="password" id="registerPassword" placeholder="Password"><br>
+    <button onclick="registerDoctor()">Register</button>
+    <p id="registerMessage"></p>
+
+    <h2>Doctor Profile</h2>
+    <button onclick="fetchDoctorProfile()">Get Profile</button>
+    <pre id="profileData"></pre>
+
+</body>
+</html>

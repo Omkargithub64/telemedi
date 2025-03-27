@@ -1,0 +1,35 @@
+<section class="py-5 bg-image overlay-primary fixed overlay">
+</section>
+
+<section class="py-5">
+    <div class="container2">
+        <h2>Room</h2>
+        <section id="room-name-wrapper">
+            <p> Room Name: <span id="room-name"></span></p>
+        </section>
+        <section id="vid-streams"></section>
+        <section id="controls-wrapper">
+            <div id="iconwrapper"><span class="control-icon" id="mic-btn">M</span></div>
+            <div id="iconwrapper"><span class="control-icon" id="vid-btn">V</span></div>
+            <div id="iconwrapper"><span class="control-icon" id="x-btn">X</span></div>
+            <button id="screen-share-btn">Share Screen</button>
+        </section>
+    </div>
+</section>
+<script type="text/javascript" src="AgoraRTC_N-4.22.2.js"></script>
+<script type="text/javascript" src="stream.js"></script>
+
+<script>
+    // Set the delay time (10 seconds)
+    const redirectDelay = 20; // 10 seconds delay before redirect
+
+    // function startRedirectCountdown() {
+    //     // Wait for the specified delay (10 seconds)
+    //     setTimeout(() => {
+    //         window.location.href = "dshboard.html"; // Redirect to home (update this URL as needed)
+    //     }, redirectDelay * 1000); // Convert 10 seconds to milliseconds
+    // }
+
+    // Start the countdown when the page loads
+    // window.onload = startRedirectCountdown;
+</script>
