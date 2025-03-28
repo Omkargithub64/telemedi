@@ -2,14 +2,13 @@
 const APP_ID = 'f9baa6f6f8a442e59264c1895147ad90';
 const CHANNEL = "12345";  // Channel name should be dynamic based on room
 const TOKEN = "007eJxTYMi2nGRRtUjjrtLi+y0LVu49VDtX22VW3Vu3GRMK13MmGKorMBikJJmYWRonGiQaG5lYmphaWCQbmJiYm1iYW5iZG6SZSj5+mt4QyMjwO7CFmZEBAkF8VgZDI2MTUwYGADxBHhI="
-let UID = Number(sessionStorage.getItem('UID')) || Math.floor(Math.random() * 10000);
+
 
 const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 
 let localTracks = [];
 let remoteUsers = {};
-let isScreenSharingActive = false;
-let screenTrack;
+
 
 let joinAndDisplayLocalStream = async () => {
     document.getElementById('room-name').innerHTML = CHANNEL;
@@ -19,7 +18,7 @@ let joinAndDisplayLocalStream = async () => {
 
     try {
         // Joining the Agora channel and getting UID
-        UID = await client.join(APP_ID, CHANNEL, TOKEN, UID);
+        UID = await client.join(APP_ID, CHANNEL, TOKEN);
         
         // Update URL to reflect the room ID (e.g., /room/3)
         window.history.pushState({}, '', `/room/${CHANNEL}`);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telemedi/book_slot_screen.dart';
 import 'package:telemedi/health_records.dart';
+import 'package:telemedi/room.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'appointments_screen.dart';
@@ -91,6 +92,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: const Text("Book Slots"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Room()),
+                );
+              },
+              child: const Text("room"),
             ),
             ElevatedButton(
               onPressed: () => _logout(context),

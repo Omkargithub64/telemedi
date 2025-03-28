@@ -37,7 +37,7 @@ async function fetchAppointments() {
                     <td>${appointment.patient_name}</td>
                     <td>${appointment.date}</td>
                     <td>${appointment.reason}</td>
-                    <td><button>Start Consultancy</button></td>
+                    <td><a href='videocunsult.html'>Start Consultancy</a></td>
                 `;
                 tableBody.appendChild(row);
             });

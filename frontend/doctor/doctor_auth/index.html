@@ -6,38 +6,203 @@
     <title>Doctor Portal</title>
     <script defer src="script.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        input, button { margin: 10px; padding: 10px; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab:hover {
+            background-color: #f1f1f1;
+        }
+
+        .active-tab {
+            font-weight: bold;
+            border-bottom: 2px solid #007bff;
+        }
+
+        /* Hide inactive tabs */
+        .tab-content {
+            display: none;
+            padding-top: 20px;
+        }
+
+        .active-content {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #007bff;
+        }
+
     </style>
 </head>
 <body>
 
-    <h2>Doctor Login</h2>
-    <input type="email" id="loginEmail" placeholder="Enter Email"><br>
-    <input type="password" id="loginPassword" placeholder="Enter Password"><br>
-    <button onclick="loginDoctor()">Login</button>
-    <p id="loginMessage"></p>
+    <div class="container">
+        <!-- Tabs for Login and Registration -->
+        <div class="tabs">
+            <div class="tab active-tab" onclick="switchTab('login')">Login</div>
+            <div class="tab" onclick="switchTab('register')">Register</div>
+        </div>
 
-    <h2>Doctor Registration</h2>
-    <input type="text" id="registerFullName" placeholder="Full Name"><br>
-    <input type="text" id="registerUsername" placeholder="Username"><br>
-    <input type="email" id="registerEmail" placeholder="Email"><br>
-    <input type="text" id="registerPhone" placeholder="Phone Number"><br>
-    <input type="date" id="registerDob"><br>
-    <input type="text" id="registerGender" placeholder="Gender (Male/Female)"><br>
-    <input type="text" id="registerSpecialization" placeholder="Specialization"><br>
-    <input type="text" id="registerQualification" placeholder="Qualification"><br>
-    <input type="number" id="registerExperience" placeholder="Experience (years)"><br>
-    <input type="text" id="registerLicense" placeholder="License Number"><br>
-    <input type="text" id="registerClinicName" placeholder="Clinic Name"><br>
-    <input type="text" id="registerClinicAddress" placeholder="Clinic Address"><br>
-    <input type="password" id="registerPassword" placeholder="Password"><br>
-    <button onclick="registerDoctor()">Register</button>
-    <p id="registerMessage"></p>
+        <!-- Login Tab Content -->
+        <div id="login" class="tab-content active-content">
+            <h2>Doctor Login</h2>
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Enter Email">
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" placeholder="Enter Password">
+            </div>
+            <button onclick="loginDoctor()">Login</button>
+            <p id="loginMessage"></p>
+        </div>
 
-    <h2>Doctor Profile</h2>
-    <button onclick="fetchDoctorProfile()">Get Profile</button>
-    <pre id="profileData"></pre>
+        <!-- Register Tab Content -->
+        <div id="register" class="tab-content">
+            <h2>Doctor Registration</h2>
+            <div class="form-group">
+                <input type="text" id="registerFullName" placeholder="Full Name">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerUsername" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="email" id="registerEmail" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerPhone" placeholder="Phone Number">
+            </div>
+            <div class="form-group">
+                <input type="date" id="registerDob">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerGender" placeholder="Gender (Male/Female)">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerSpecialization" placeholder="Specialization">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerQualification" placeholder="Qualification">
+            </div>
+            <div class="form-group">
+                <input type="number" id="registerExperience" placeholder="Experience (years)">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerLicense" placeholder="License Number">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerClinicName" placeholder="Clinic Name">
+            </div>
+            <div class="form-group">
+                <input type="text" id="registerClinicAddress" placeholder="Clinic Address">
+            </div>
+            <div class="form-group">
+                <input type="password" id="registerPassword" placeholder="Password">
+            </div>
+            <button onclick="registerDoctor()">Register</button>
+            <p id="registerMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            const loginTab = document.getElementById("login");
+            const registerTab = document.getElementById("register");
+            const loginButton = document.querySelector(".tabs .active-tab");
+            const registerButton = document.querySelector(".tabs .tab:nth-child(2)");
+
+            if (tabName === 'login') {
+                loginTab.classList.add("active-content");
+                registerTab.classList.remove("active-content");
+                loginButton.classList.add("active-tab");
+                registerButton.classList.remove("active-tab");
+            } else {
+                registerTab.classList.add("active-content");
+                loginTab.classList.remove("active-content");
+                registerButton.classList.add("active-tab");
+                loginButton.classList.remove("active-tab");
+            }
+        }
+    </script>
 
 </body>
 </html>
