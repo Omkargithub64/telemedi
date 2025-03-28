@@ -11,6 +11,7 @@ import cloudinary
 import cloudinary.uploader
 import os
 from agora_token_builder import RtcTokenBuilder
+from sqlalchemy import Column, ForeignKey, Integer, Table
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -35,6 +36,12 @@ cloudinary.config(
 )
 
 
+
+prescription_medicine = Table('prescription_medicine', db.metadata,
+    Column('prescription_id', Integer, ForeignKey('prescription.id')),
+    Column('medicine_id', Integer, ForeignKey('medicine.id'))
+)
+
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -44,7 +51,8 @@ class Patient(db.Model):
     date_of_birth = db.Column(db.Date, nullable=False)
     gender = db.Column(db.String(10), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    profile_picture = db.Column(db.String(300), nullable=True)  # Cloudinary URL
+    profile_picture = db.Column(db.String(300), nullable=True)  
+    prescriptions = db.relationship('Prescription', backref='patient', lazy=True)# Cloudinary URL
 
 
 
@@ -114,7 +122,25 @@ class Slot(db.Model):
 
 
 
+class Medicine(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    dosage = db.Column(db.String(255), nullable=False)
+    instructions = db.Column(db.Text, nullable=False)
+    
+    def __repr__(self):
+        return f'<Medicine {self.name}>'
 
+class Prescription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)  # Assuming a User model for doctors
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    medicines = db.relationship('Medicine', secondary='prescription_medicine', backref='prescriptions')
+    
+    def __repr__(self):
+        return f'<Prescription for {self.patient_name}>'
+ 
 
 class PatientRegister(Resource):
     def post(self):
@@ -611,6 +637,122 @@ def room(room):
     return jsonify(context)
 
 
+
+
+class GetPrescriptions(Resource):
+    @jwt_required()
+    def get(self):
+        patient_id = get_jwt_identity()  # Get the patient ID from the JWT token
+        prescriptions = Prescription.query.filter_by(patient_id=patient_id).all()
+
+        if not prescriptions:
+            return {"message": "No prescriptions found"}, 404
+
+        prescription_list = [
+            {
+                "id": prescription.id,
+                "patient_name": prescription.patient_name,
+                "doctor_name": prescription.doctor_name,
+                "date": prescription.date.strftime('%Y-%m-%d'),
+                "medicines": [
+                    {
+                        "medicine_name": medicine.name,
+                        "dosage": medicine.dosage,
+                        "instructions": medicine.instructions
+                    }
+                    for medicine in prescription.medicines
+                ]
+            }
+            for prescription in prescriptions
+        ]
+
+        return {"prescriptions": prescription_list}, 200
+    
+class GetMedicines(Resource):
+    @jwt_required()
+    def get(self):
+        medicines = Medicine.query.all()  # Assuming `Medicine` is a defined model in your app
+
+        if not medicines:
+            return {"message": "No medicines found"}, 404
+
+        medicine_list = [
+            {
+                "id": medicine.id,
+                "name": medicine.name,
+                "dosage": medicine.dosage,
+                "instructions": medicine.instructions
+            }
+            for medicine in medicines
+        ]
+
+        return {"medicines": medicine_list}, 200
+
+
+
+class CreatePrescription(Resource):
+    @jwt_required()
+    def post(self):
+        patient_id = get_jwt_identity()  # Get the patient ID from JWT token
+        data = request.get_json()
+
+        # Validate required fields
+        if not data.get("patient_name") or not data.get("medicines"):
+            return {"message": "Missing required fields (patient_name, medicines)"}, 400
+
+        # Create new prescription
+        new_prescription = Prescription(
+            patient_name=data["patient_name"],
+            doctor_name=data["doctor_name"],  # You can get the doctor's name from the JWT token or request data
+            patient_id=patient_id
+        )
+
+        db.session.add(new_prescription)
+        db.session.commit()  # Save the prescription to get the ID
+
+        # Add medicines to the prescription
+        for medicine_data in data["medicines"]:
+            medicine = Medicine.query.get(medicine_data["medicine_id"])
+            if medicine:
+                new_prescription.medicines.append(medicine)
+            else:
+                return {"message": f"Medicine with ID {medicine_data['medicine_id']} not found"}, 404
+        
+        db.session.commit()
+
+        return {"message": "Prescription created successfully", "prescription_id": new_prescription.id}, 201
+    
+class CreateMedicine(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+
+        # Validate required fields
+        if not data.get("name") or not data.get("dosage") or not data.get("instructions"):
+            return {"message": "Missing required fields (name, dosage, instructions)"}, 400
+
+        # Create new medicine entry
+        new_medicine = Medicine(
+            name=data["name"],
+            dosage=data["dosage"],
+            instructions=data["instructions"]
+        )
+
+        db.session.add(new_medicine)
+        db.session.commit()
+
+        return {"message": "Medicine created successfully", "medicine_id": new_medicine.id}, 201
+
+
+
+
+
+
+
+
+
+
+
 # ----------------------- Register API Routes -----------------------
 api.add_resource(PatientRegister, "/api/users/patients/register/")
 api.add_resource(PatientLogin, "/api/users/patients/login/")
@@ -630,6 +772,10 @@ api.add_resource(GetDoctorAppointments, "/api/doctor/appointments")
 api.add_resource(MarkSlotBusy, "/api/doctor/slots/busy/<int:slot_id>")
 api.add_resource(UnmarkSlotBusy, "/api/doctor/slots/unbusy/<int:slot_id>")
 api.add_resource(DeleteSlot, "/api/doctor/slots/delete/<int:slot_id>")
+api.add_resource(CreateMedicine, "/api/medicines")
+api.add_resource(GetMedicines, "/api/getmedicines")
+api.add_resource(CreatePrescription, "/api/prescriptions")
+
 
 # api.add_resource(StartConsultancy, '/api/start-consultancy')
 

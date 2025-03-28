@@ -6,65 +6,83 @@
     <title>Doctor Portal</title>
     <script defer src="script.js"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            box-sizing: border-box;
+            background: linear-gradient(135deg, #e6f0fa 0%, #f7f9fc 100%);
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 900px;
             margin: 20px;
+            display: flex;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .image-section {
+            width: 40%;
+            background-color: #2980b9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-section {
+            width: 60%;
             padding: 40px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
+            color: #2c3e50;
         }
 
         h2 {
             font-size: 24px;
-            color: #333;
+            font-weight: 500;
+            color: #2c3e50;
             text-align: center;
             margin-bottom: 20px;
         }
 
-        /* Tab styles */
         .tabs {
             display: flex;
             justify-content: space-around;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e6ed;
         }
 
         .tab {
-            padding: 10px 20px;
+            padding: 12px 25px;
             cursor: pointer;
             font-size: 18px;
-            transition: background-color 0.3s ease;
+            color: #34495e;
+            transition: all 0.3s ease;
         }
 
         .tab:hover {
-            background-color: #f1f1f1;
+            background-color: #f8fafc;
         }
 
         .active-tab {
-            font-weight: bold;
-            border-bottom: 2px solid #007bff;
+            color: #2980b9;
+            font-weight: 600;
+            border-bottom: 3px solid #2980b9;
         }
 
-        /* Hide inactive tabs */
         .tab-content {
             display: none;
-            padding-top: 20px;
         }
 
         .active-content {
@@ -79,107 +97,178 @@
             width: 100%;
             padding: 12px;
             margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
             font-size: 16px;
-            box-sizing: border-box;
+            background-color: #fff;
+            color: #2c3e50;
+            transition: border-color 0.3s ease;
         }
 
         input:focus {
-            border-color: #007bff;
+            border-color: #3498db;
             outline: none;
+        }
+
+        input::placeholder {
+            color: #7f8c8d;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #007bff;
+            padding: 14px;
+            background: #2980b9;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background: #3498db;
         }
 
         p {
             text-align: center;
             font-size: 14px;
-            color: #007bff;
+            color: #2980b9;
+            margin-top: 15px;
         }
 
+        #register {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        #register::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #register::-webkit-scrollbar-track {
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        #register::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 4px;
+        }
+
+        #register::-webkit-scrollbar-thumb:hover {
+            background: #95a5a6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                margin: 15px;
+            }
+
+            .image-section {
+                width: 100%;
+                padding: 30px;
+            }
+
+            .form-section {
+                width: 100%;
+                padding: 25px;
+            }
+
+            .tab {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab {
+                width: 100%;
+                text-align: center;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Tabs for Login and Registration -->
-        <div class="tabs">
-            <div class="tab active-tab" onclick="switchTab('login')">Login</div>
-            <div class="tab" onclick="switchTab('register')">Register</div>
+        <div class="image-section">
+            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 20C68.6 20 43 45.6 43 77C43 108.4 68.6 134 100 134C131.4 134 157 108.4 157 77C157 45.6 131.4 20 100 20ZM100 30C126 30 147 51 147 77C147 103 126 124 100 124C74 124 53 103 53 77C53 51 74 30 100 30Z" fill="#ecf0f1"/>
+                <path d="M100 140C63.5 140 33 157.5 33 180V190H167V180C167 157.5 136.5 140 100 140ZM43 180C43 163 66.5 150 100 150C133.5 150 157 163 157 180H43Z" fill="#ecf0f1"/>
+                <path d="M100 80C92.8 80 87 85.8 87 93C87 100.2 92.8 106 100 106C107.2 106 113 100.2 113 93C113 85.8 107.2 80 100 80ZM100 90C102.2 90 104 91.8 104 94C104 96.2 102.2 98 100 98C97.8 98 96 96.2 96 94C96 91.8 97.8 90 100 90Z" fill="#3498db"/>
+                <path d="M90 60H110V70H90V60Z" fill="#3498db"/>
+            </svg>
         </div>
+        <div class="form-section">
+            <div class="tabs">
+                <div class="tab active-tab" onclick="switchTab('login')">Login</div>
+                <div class="tab" onclick="switchTab('register')">Register</div>
+            </div>
 
-        <!-- Login Tab Content -->
-        <div id="login" class="tab-content active-content">
-            <h2>Doctor Login</h2>
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="Enter Email">
+            <div id="login" class="tab-content active-content">
+                <h2>Doctor Login</h2>
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Enter Email">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Enter Password">
+                </div>
+                <button onclick="loginDoctor()">Login</button>
+                <p id="loginMessage"></p>
             </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Enter Password">
-            </div>
-            <button onclick="loginDoctor()">Login</button>
-            <p id="loginMessage"></p>
-        </div>
 
-        <!-- Register Tab Content -->
-        <div id="register" class="tab-content">
-            <h2>Doctor Registration</h2>
-            <div class="form-group">
-                <input type="text" id="registerFullName" placeholder="Full Name">
+            <div id="register" class="tab-content">
+                <h2>Doctor Registration</h2>
+                <div class="form-group">
+                    <input type="text" id="registerFullName" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <input type="email" id="registerEmail" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerPhone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <input type="date" id="registerDob">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerGender" placeholder="Gender (Male/Female)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerSpecialization" placeholder="Specialization">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerQualification" placeholder="Qualification">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="registerExperience" placeholder="Experience (years)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerLicense" placeholder="License Number">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerClinicName" placeholder="Clinic Name">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="registerClinicAddress" placeholder="Clinic Address">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="registerPassword" placeholder="Password">
+                </div>
+                <button onclick="registerDoctor()">Register</button>
+                <p id="registerMessage"></p>
             </div>
-            <div class="form-group">
-                <input type="text" id="registerUsername" placeholder="Username">
-            </div>
-            <div class="form-group">
-                <input type="email" id="registerEmail" placeholder="Email">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerPhone" placeholder="Phone Number">
-            </div>
-            <div class="form-group">
-                <input type="date" id="registerDob">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerGender" placeholder="Gender (Male/Female)">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerSpecialization" placeholder="Specialization">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerQualification" placeholder="Qualification">
-            </div>
-            <div class="form-group">
-                <input type="number" id="registerExperience" placeholder="Experience (years)">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerLicense" placeholder="License Number">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerClinicName" placeholder="Clinic Name">
-            </div>
-            <div class="form-group">
-                <input type="text" id="registerClinicAddress" placeholder="Clinic Address">
-            </div>
-            <div class="form-group">
-                <input type="password" id="registerPassword" placeholder="Password">
-            </div>
-            <button onclick="registerDoctor()">Register</button>
-            <p id="registerMessage"></p>
         </div>
     </div>
 
@@ -187,7 +276,7 @@
         function switchTab(tabName) {
             const loginTab = document.getElementById("login");
             const registerTab = document.getElementById("register");
-            const loginButton = document.querySelector(".tabs .active-tab");
+            const loginButton = document.querySelector(".tabs .tab:first-child");
             const registerButton = document.querySelector(".tabs .tab:nth-child(2)");
 
             if (tabName === 'login') {
@@ -203,6 +292,5 @@
             }
         }
     </script>
-
 </body>
 </html>

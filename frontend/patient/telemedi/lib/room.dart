@@ -29,7 +29,7 @@ class _RoomState extends State<Room> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>  MyApp(),
+        builder: (context) => const RoomScreen(),
       ),
     );
   }

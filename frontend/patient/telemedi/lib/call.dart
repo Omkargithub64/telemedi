@@ -1,24 +1,25 @@
 import 'dart:async';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const appId = "f9baa6f6f8a442e59264c1895147ad90";
-const token = "007eJxTYMi2nGRRtUjjrtLi+y0LVu49VDtX22VW3Vu3GRMK13MmGKorMBikJJmYWRonGiQaG5lYmphaWCQbmJiYm1iYW5iZG6SZSj5+mt4QyMjwO7CFmZEBAkF8VgZDI2MTUwYGADxBHhI=";
+const token =
+    "007eJxTYMi2nGRRtUjjrtLi+y0LVu49VDtX22VW3Vu3GRMK13MmGKorMBikJJmYWRonGiQaG5lYmphaWCQbmJiYm1iYW5iZG6SZSj5+mt4QyMjwO7CFmZEBAkF8VgZDI2MTUwYGADxBHhI=";
 const channel = "12345";
 
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class RoomScreen extends StatefulWidget {
+  const RoomScreen({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<RoomScreen> createState() => _RoomScreenState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _RoomScreenState extends State<RoomScreen> {
   int? _remoteUid;
   bool _localUserJoined = false;
+  bool _micEnabled = true;
+  bool _videoEnabled = true;
   late RtcEngine _engine;
 
   @override
@@ -28,10 +29,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initAgora() async {
-    // retrieve permissions
     await [Permission.microphone, Permission.camera].request();
 
-    //create the engine
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
       appId: appId,
@@ -81,7 +80,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     super.dispose();
-
     _dispose();
   }
 
@@ -90,41 +88,164 @@ class _MyAppState extends State<MyApp> {
     await _engine.release();
   }
 
-  // Create UI with local view and remote view
+  void _toggleMic() {
+    setState(() {
+      _micEnabled = !_micEnabled;
+      _engine.muteLocalAudioStream(!_micEnabled);
+    });
+  }
+
+  void _toggleVideo() {
+    setState(() {
+      _videoEnabled = !_videoEnabled;
+      _engine.muteLocalVideoStream(!_videoEnabled);
+    });
+  }
+
+  void _leaveCall() {
+    _dispose();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agora Video Call'),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: _remoteVideo(),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFe6f0fa),
+              Color(0xFFf7f9fc),
+            ],
           ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 100,
-              height: 150,
-              child: Center(
-                child: _localUserJoined
-                    ? AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: _engine,
-                          canvas: const VideoCanvas(uid: 0),
-                        ),
-                      )
-                    : const CircularProgressIndicator(),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Video Consultation",
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2980b9),
+                        letterSpacing: 1.2,
+                        shadows: [
+                          const Shadow(
+                            color: Colors.black12,
+                            offset: Offset(2, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.videocam, color: Color(0xFF2980b9)),
+                  ],
+                ),
               ),
-            ),
+
+              // Video Streams
+              Expanded(
+                child: Stack(
+                  children: [
+                    // Remote Video (Main View)
+                    Container(
+                      margin: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: _remoteVideo(),
+                      ),
+                    ),
+
+                    // Local Video (Picture-in-Picture)
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Container(
+                        width: 120,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: _localUserJoined
+                              ? AgoraVideoView(
+                                  controller: VideoViewController(
+                                    rtcEngine: _engine,
+                                    canvas: const VideoCanvas(uid: 0),
+                                  ),
+                                )
+                              : const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF2980b9)),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Controls
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildControlButton(
+                      icon: _micEnabled ? Icons.mic : Icons.mic_off,
+                      color: const Color(0xFF2ecc71),
+                      onPressed: _toggleMic,
+                    ),
+                    const SizedBox(width: 20),
+                    _buildControlButton(
+                      icon: _videoEnabled ? Icons.videocam : Icons.videocam_off,
+                      color: const Color(0xFF3498db),
+                      onPressed: _toggleVideo,
+                    ),
+                    const SizedBox(width: 20),
+                    _buildControlButton(
+                      icon: Icons.call_end,
+                      color: const Color(0xFFe74c3c),
+                      onPressed: _leaveCall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  // Display remote user's video
   Widget _remoteVideo() {
     if (_remoteUid != null) {
       return AgoraVideoView(
@@ -135,10 +256,41 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     } else {
-      return const Text(
-        'Please wait for remote user to join',
-        textAlign: TextAlign.center,
+      return Container(
+        color: const Color(0xFF34495e),
+        child: const Center(
+          child: Text(
+            "Waiting for doctor to join...",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
       );
     }
+  }
+
+  Widget _buildControlButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(16),
+        elevation: 5,
+      ),
+      child: Icon(
+        icon,
+        size: 28,
+        color: Colors.white,
+      ),
+    );
   }
 }

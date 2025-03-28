@@ -41,7 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        // Store values safely (fallback to empty string if null)
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("token", token);
         await prefs.setString("full_name", fullName ?? "");
@@ -50,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString("date_of_birth", dateOfBirth ?? "");
         await prefs.setString("gender", gender ?? "");
 
-        // Navigate to Home Screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -65,41 +63,182 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: login, child: const Text("Login")),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterScreen(),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFe6f0fa), // Light blue from previous designs
+              Color(0xFFf7f9fc), // Light gray
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Logo or Icon
+                  const Icon(
+                    Icons.local_hospital,
+                    size: 80,
+                    color: Color(0xFF2980b9),
                   ),
-                );
-              },
-              child: const Text("Don't have an account? Register"),
+                  const SizedBox(height: 10),
+
+                  // Stylish Heading
+                  Text(
+                    "TeleMedi",
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF2980b9),
+                      letterSpacing: 1.5,
+                      shadows: [
+                        const Shadow(
+                          color: Colors.black12,
+                          offset: Offset(2, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Email Input Field
+                  _buildTextField(
+                    controller: emailController,
+                    label: "Email",
+                    hint: "Enter your email",
+                    icon: Icons.email_outlined,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Password Input Field
+                  _buildTextField(
+                    controller: passwordController,
+                    label: "Password",
+                    hint: "Enter your password",
+                    icon: Icons.lock_outline,
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Login Button
+                  ElevatedButton(
+                    onPressed: login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2980b9),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 80),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 5,
+                      shadowColor: Colors.black26,
+                    ),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Register Link
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterScreen(),
+                        ),
+                      );
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                        children: [
+                          TextSpan(
+                            text: "Register",
+                            style: TextStyle(
+                              color: Color(0xFF2980b9),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    bool obscureText = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Color(0xFF2980b9)),
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.grey),
+          prefixIcon: Icon(icon, color: const Color(0xFF2980b9)),
+          filled: true,
+          fillColor: Colors.transparent,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF3498db), width: 2),
+          ),
         ),
       ),
     );

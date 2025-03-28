@@ -52,14 +52,6 @@ async function fetchAppointments() {
     }
 }
 
-// Logout function with confirmation
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    const confirmLogout = confirm("Are you sure you want to log out?");
-    if (confirmLogout) {
-        localStorage.removeItem("token");
-        window.location.href = "index.html";
-    }
-});
 
 // Load appointments when the page is ready
 fetchAppointments();
